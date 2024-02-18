@@ -1,4 +1,4 @@
-name: Build and test pushes and PRs
+name: Test
 on: [push, pull_request]
 
 jobs:
