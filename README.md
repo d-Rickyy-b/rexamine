@@ -106,57 +106,6 @@ To do this efficiently, we can utilize [hyperfine](https://github.com/sharkdp/hy
 ```bash
 rexamine> hyperfine -w 2 -r 6 'iocopy.exe -file 500mb.txt -regex "..."' 'ioreadall.exe -file 500mb.txt -regex "..."' 'rexamine.exe -file 500mb.txt -regex "..."' 'rexaminewriter.exe -file 500mb.txt -regex "..."'
 Benchmark 1: iocopy.exe -file 500mb.txt -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-  Time (mean ± σ):      7.950 s ±  0.040 s    [User: 2.888 s, System: 0.080 s]
-  Range (min … max):    7.891 s …  7.990 s    6 runs
-
-Benchmark 2: ioreadall.exe -file 500mb.txt -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-  Time (mean ± σ):      8.142 s ±  0.183 s    [User: 1.833 s, System: 0.060 s]
-  Range (min … max):    8.004 s …  8.500 s    6 runs
-
-Benchmark 3: rexamine.exe -file 500mb.txt -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-  Time (mean ± σ):      8.489 s ±  0.017 s    [User: 1.302 s, System: 0.041 s]
-  Range (min … max):    8.469 s …  8.509 s    6 runs
-
-Benchmark 4: rexaminewriter.exe -file 500mb.txt -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-  Time (mean ± σ):      8.904 s ±  0.355 s    [User: 2.260 s, System: 0.093 s]
-  Range (min … max):    8.650 s …  9.386 s    6 runs
-
-Summary
-  iocopy.exe -file 500mb.txt -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24} ran
-    1.02 ± 0.02 times faster than ioreadall.exe -file 500mb.txt -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-    1.07 ± 0.01 times faster than rexamine.exe -file 500mb.txt -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-    1.12 ± 0.05 times faster than rexaminewriter.exe -file 500mb.txt -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-
-
-
-rexamine> hyperfine -w 2 -r 6 'iocopy.exe -file 500mb.txt -regex "..."' 'ioreadall.exe -file 500mb.txt -regex "..."' 'rexamine.exe -file 500mb.txt -regex "..."' 'rexaminewriter.exe -file 500mb.txt -regex "..."'
-Benchmark 1: iocopy.exe -file 500mb.bin -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-  Time (mean ± σ):     10.046 s ±  0.180 s    [User: 1.294 s, System: 0.038 s]
-  Range (min … max):    9.929 s … 10.395 s    6 runs
-
-Benchmark 2: ioreadall.exe -file 500mb.bin -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-  Time (mean ± σ):     10.076 s ±  0.105 s    [User: 1.010 s, System: 0.025 s]
-  Range (min … max):   10.013 s … 10.290 s    6 runs
-
-Benchmark 3: rexamine.exe -file 500mb.bin -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-  Time (mean ± σ):     10.688 s ±  0.219 s    [User: 0.771 s, System: 0.015 s]
-  Range (min … max):   10.507 s … 11.082 s    6 runs
-
-Benchmark 4: rexaminewriter.exe -file 500mb.bin -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-  Time (mean ± σ):     11.087 s ±  0.328 s    [User: 3.419 s, System: 0.116 s]
-  Range (min … max):   10.869 s … 11.646 s    6 runs
-
-Summary
-  iocopy.exe -file 500mb.bin -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24} ran
-    1.00 ± 0.02 times faster than ioreadall.exe -file 500mb.bin -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-    1.06 ± 0.03 times faster than rexamine.exe -file 500mb.bin -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-    1.10 ± 0.04 times faster than rexaminewriter.exe -file 500mb.bin -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
-
-
-
-
-rexamine> hyperfine -w 2 -r 6 'iocopy.exe -file 500mb.txt -regex "..."' 'ioreadall.exe -file 500mb.txt -regex "..."' 'rexamine.exe -file 500mb.txt -regex "..."' 'rexaminewriter.exe -file 500mb.txt -regex "..."'
-Benchmark 1: iocopy.exe -file 500mb.txt -regex [\w\-+\.%]+@[\w-]+\.[a-zA-Z]{2,24}
   Time (mean ± σ):      8.045 s ±  0.279 s    [User: 2.852 s, System: 0.049 s]
   Range (min … max):    7.887 s …  8.612 s    6 runs
 
