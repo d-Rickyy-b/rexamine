@@ -3,6 +3,7 @@
 </p>
 
 # rexamine
+
 [![build](https://github.com/d-Rickyy-b/rexamine/actions/workflows/test.yml/badge.svg)](https://github.com/d-Rickyy-b/rexamine/actions/workflows/test.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/d-Rickyy-b/rexamine.svg)](https://pkg.go.dev/github.com/d-Rickyy-b/rexamine)
 
@@ -67,8 +68,8 @@ And instead of matching "one or more matches" with `+`, use `{1,10}` to match "o
 
 ## Benchmark
 
-The benchmarks show that rexamine is about 5-7% slower than reading all the file's content into memory and searching it with regex all at once.
-On the other hand, it uses only about 19 KB of memory.
+The benchmarks show that rexamine is about **5-7%** slower than reading all the file's content into memory and searching it with regex all at once.
+On the other hand, it uses only about **19 KB** of memory.
 
 ### Preparation
 
@@ -76,10 +77,10 @@ For the benchmark, we need to generate some binary and text files (haystack) in 
 To do so, we used the following method:
 
 Binary file:
-`dd if=/dev/urandom bs=100M count=1 iflag=fullblock of=sample.txt`
+`dd if=/dev/urandom bs=100M count=1 iflag=fullblock of=sample.bin`
 
 Text file:
-`dd if=/dev/urandom iflag=fullblock | base64 -w 0 | head -c 100M > test2.txt`
+`dd if=/dev/urandom iflag=fullblock | base64 -w 0 | head -c 100M > sample.txt`
 
 To insert some data (needle) we want to find with rexamine:
 
@@ -135,9 +136,8 @@ We can see that rexamine is about 7% slower than reading the full file into memo
 Since rexamine was specifically developed to decrease the memory footprint, the used memory is much more important than execution speed.
 We can use Go's benchmarking tooling to get data on memory usage.
 
-`go test -bench=.\pkg\streamregex -benchmem -run=^$ -bench ^Benchmark.+$ -count 5`
-
-```
+```bash
+rexamine> go test -bench=.\pkg\streamregex -benchmem -run=^$ -bench ^Benchmark.+$ -count 5
 cpu: AMD Ryzen 9 7900 12-Core Processor
 BenchmarkIOCopy-24                     1        1618671100 ns/op        268449152 B/op        76 allocs/op
 BenchmarkIOReadAll-24                  1        1570844100 ns/op        615242440 B/op       106 allocs/op
