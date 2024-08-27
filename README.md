@@ -94,7 +94,7 @@ After that we only need to compile the four test binaries.
 
 ```bash
 go build .\cmd\iocopy
-go build .\cmd\iocreadall
+go build .\cmd\ioreadall
 go build .\cmd\rexamine
 go build .\cmd\rexaminewriter
 ```
