@@ -59,11 +59,13 @@ It hasn't been tested excessively, so there might still be bugs.
 Use at your own risk.
 
 To search through large files via regex, rexamine caches data in a buffer.
-If the amount of characters matched by a given regex exceeds the chosen buffer size, obviously the full match cannot be extracted.
+If the number of characters matched by a given regex exceeds the chosen buffer size, the full match cannot be extracted.
 This can easily happen by using unlimited quantifiers like `*`, `+` or `{3,}`.
 To prevent issues, make sure to limit the length of a match by either specifically defining the quantity `{5}` or at least by setting an upper bound.
 
-So instead of matching "any amount of matches" with `*`, use `{,10}` to match "any amount of matches up to 10".
+An example use case could be the matching of long lines: `.*\n`. If a line exceeds the buffer length, the line will not be matched and extracted.
+
+So instead of matching "any number of matches" with `*`, use `{,10}` to match "any number of matches up to 10".
 And instead of matching "one or more matches" with `+`, use `{1,10}` to match "one or more matches up to 10".
 
 ## Benchmark
@@ -101,8 +103,8 @@ go build .\cmd\rexaminewriter
 
 ### hyperfine
 
-With the generated files in place we can now run rexamine on these files and compare different approaches.
-To do this efficiently, we can utilize [hyperfine](https://github.com/sharkdp/hyperfine).
+With the generated files in place, we can now run rexamine on these files and compare different approaches.
+To do this efficiently, we can use [hyperfine](https://github.com/sharkdp/hyperfine).
 
 ```bash
 rexamine> hyperfine -w 2 -r 6 'iocopy.exe -file 500mb.txt -regex "..."' 'ioreadall.exe -file 500mb.txt -regex "..."' 'rexamine.exe -file 500mb.txt -regex "..."' 'rexaminewriter.exe -file 500mb.txt -regex "..."'
