@@ -1,4 +1,4 @@
-package streamregex
+package rexamine
 
 import (
 	"errors"

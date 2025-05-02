@@ -30,7 +30,7 @@ import (
     "regexp"
     "strings"
 
-    "github.com/d-Rickyy-b/rexamine/pkg/streamregex"
+    "github.com/d-Rickyy-b/rexamine"
 )
 
 func main() {
@@ -41,7 +41,7 @@ func main() {
         os.Exit(1)
     }
 
-    newReader := streamregex.NewRegexReader(targetFile, pattern)
+    newReader := rexamine.NewRegexReader(targetFile, pattern)
 
     matches, err := newReader.FindAllMatches()
     if err != nil {
@@ -139,7 +139,7 @@ Since rexamine was specifically developed to decrease the memory footprint, the 
 We can use Go's benchmarking tooling to get data on memory usage.
 
 ```bash
-rexamine> go test -bench=.\pkg\streamregex -benchmem -run=^$ -bench ^Benchmark.+$ -count 5
+rexamine> go test -bench=.\ -benchmem -run=^$ -bench ^Benchmark.+$ -count 5
 cpu: AMD Ryzen 9 7900 12-Core Processor
 BenchmarkIOCopy-24                     1        1618671100 ns/op        268449152 B/op        76 allocs/op
 BenchmarkIOReadAll-24                  1        1570844100 ns/op        615242440 B/op       106 allocs/op

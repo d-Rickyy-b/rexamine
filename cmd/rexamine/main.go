@@ -5,7 +5,7 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/d-Rickyy-b/rexamine/pkg/streamregex"
+	"github.com/d-Rickyy-b/rexamine"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 	}
 
 	// fmt.Println("Using custom")
-	newReader := streamregex.NewRegexReader(targetFile, pattern)
+	newReader := rexamine.NewRegexReaderSize(targetFile, pattern, 1024*1024)
 
 	_, err := newReader.FindAllMatches()
 	if err != nil {

@@ -2,11 +2,10 @@ package main
 
 import (
 	"flag"
+	"github.com/d-Rickyy-b/rexamine"
 	"io"
 	"os"
 	"regexp"
-
-	"github.com/d-Rickyy-b/rexamine/pkg/streamregex"
 )
 
 func main() {
@@ -22,7 +21,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	w := streamregex.NewRegexWriter(pattern)
+	w := rexamine.NewRegexWriter(pattern)
 	go func() {
 		_, err := io.Copy(w, targetFile)
 		if err != nil {

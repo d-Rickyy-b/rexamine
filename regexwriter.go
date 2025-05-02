@@ -1,11 +1,12 @@
-package streamregex
+package rexamine
 
 import (
 	"io"
 	"regexp"
 )
 
-// RegexWriter
+// RegexWriter is a helper struct that wraps a pipe and a RegexReader.
+// It allows for writing data to the pipe asynchronously while simultaneously scanning the written data for matches.
 type RegexWriter struct {
 	rd RegexReader
 	wr io.WriteCloser
@@ -46,7 +47,7 @@ func (w *RegexWriter) FindAllMatchesFunc(deliver func(string)) error {
 	return w.rd.FindAllMatchesFunc(deliver)
 }
 
-// Close closes the write end of the pipe.
+// Close closes the writing end of the pipe.
 func (w *RegexWriter) Close() {
 	w.wr.Close()
 }
