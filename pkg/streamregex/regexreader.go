@@ -90,6 +90,36 @@ func (rr *RegexReader) FindAllMatchesFunc(deliver func(string)) error {
 // It reads and returns the next UTF-8-encoded Unicode code point from the buffer.
 // It automatically fills the buffer as necessary from the underlying reader.
 func (rr *RegexReader) ReadRune() (r rune, size int, err error) {
+	if rr.r < 0 {
+		// In case r is negative, read must continue again from prevBuf
+		if -rr.r > len(rr.prevBuf) {
+			// If the buffer size is smaller than the (negative) offset of the read position, the reader is out of bounds
+			// This can happen if the regex match is larger than ~1-2x the buffer size
+			return 0, 0, fmt.Errorf("out of bounds read: %d", rr.r)
+		}
+
+		tmpBuf := make([]byte, utf8.UTFMax)
+		if rr.r+utf8.UTFMax > 0 {
+			// If the next UTF8 char spans across two buffers, we need to read additional bytes from buf
+			copied := copy(tmpBuf, rr.prevBuf[len(rr.prevBuf)+rr.r:])
+			copy(tmpBuf[copied:], rr.buf[:utf8.UTFMax-copied])
+		} else {
+			// All bytes are in prevBuf, so we can just copy the bytes from prevBuf
+			copy(tmpBuf, rr.prevBuf[len(rr.prevBuf)+rr.r:])
+		}
+
+		// Try to use the first byte from the temporary buffer as rune
+		r, size = rune(tmpBuf[0]), 1
+		if r >= utf8.RuneSelf {
+			// If the first byte is not a valid rune, we need to decode the rune from the temporary buffer
+			r, size = utf8.DecodeRune(tmpBuf)
+		}
+		rr.r += size
+		rr.readBytes += size
+
+		return r, size, nil
+	}
+
 	for rr.r+utf8.UTFMax > rr.w && !utf8.FullRune(rr.buf[rr.r:rr.w]) && rr.err == nil && rr.w-rr.r < len(rr.buf) {
 		rr.fill() // m.w-m.r < len(buf) => buffer is not full
 	}
@@ -115,6 +145,23 @@ func (rr *RegexReader) ReadRune() (r rune, size int, err error) {
 // It reads as many bytes as fit in p.
 // It automatically fills the buffer as necessary from the underlying reader.
 func (rr *RegexReader) Read(p []byte) (n int, err error) {
+	if rr.r < 0 {
+		// In case r is negative, read must continue again from prevBuf
+
+		if -rr.r > len(rr.prevBuf) {
+			// If the buffer size is smaller than the (negative) offset of the read position, the reader is out of bounds
+			// This can happen if the regex match is larger than ~1-2x the buffer size
+			return 0, fmt.Errorf("out of bounds read: %d", rr.r)
+		}
+
+		// In case r is negative, read must continue again from prevBuf
+		n = copy(p, rr.prevBuf[len(rr.prevBuf)+rr.r:])
+
+		rr.r += n
+
+		return n, nil
+	}
+
 	if rr.r == rr.w {
 		// If the reader reached the end of the buffer, we need to fill it again
 		if rr.err != nil {
@@ -163,6 +210,11 @@ func (rr *RegexReader) getLastBytes(n, l int) ([]byte, error) {
 
 	bl := rr.bufLower()
 	baseOffset := n - bl
+
+	// If the offset we want to read from is smaller than the lowest address of the buffer, we run into OOB
+	if n < bl {
+		return []byte{}, fmt.Errorf("out of bounds match - read: %d - bl: %d", n, bl)
+	}
 
 	// Check if we need to copy bytes from prevBuf, buf or both
 	if baseOffset >= len(rr.buf) {
@@ -258,7 +310,13 @@ func (rr *RegexReader) resetReaderTo(newR int) error {
 	rr.r -= diff
 
 	if rr.r < 0 {
-		return fmt.Errorf("resetReaderTo: negative read position: %d", rr.r)
+		// In case r is negative, read must continue again from prevBuf
+		// This is handled in the readRune and Read methods
+		if len(rr.buf) < -1*rr.r {
+			// If the chosen buffer size is smaller than the negative offset of the read position, the reader is out of bounds
+			// This can happen if the regex match is larger than ~2x the buffer size
+			return fmt.Errorf("resetReaderTo: negative read position: %d", rr.r)
+		}
 	}
 
 	return nil
