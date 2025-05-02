@@ -172,9 +172,10 @@ func (rr *RegexReader) Read(p []byte) (n int, err error) {
 			return 0, io.EOF
 		}
 	}
-	n = copy(p, rr.buf[rr.r:rr.w])
 
+	n = copy(p, rr.buf[rr.r:rr.w])
 	rr.r += n
+	rr.readBytes += n
 
 	return n, nil
 }
