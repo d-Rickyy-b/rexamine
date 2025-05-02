@@ -98,8 +98,10 @@ func (rr *RegexReader) ReadRune() (r rune, size int, err error) {
 		return 0, 0, rr.readErr()
 	}
 
+	// Try to use the first byte from the buffer as rune
 	r, size = rune(rr.buf[rr.r]), 1
 	if r >= utf8.RuneSelf {
+		// If the first byte is not a valid rune, we need to decode the rune from the buffer
 		r, size = utf8.DecodeRune(rr.buf[rr.r:rr.w])
 	}
 
@@ -114,6 +116,7 @@ func (rr *RegexReader) ReadRune() (r rune, size int, err error) {
 // It automatically fills the buffer as necessary from the underlying reader.
 func (rr *RegexReader) Read(p []byte) (n int, err error) {
 	if rr.r == rr.w {
+		// If the reader reached the end of the buffer, we need to fill it again
 		if rr.err != nil {
 			return 0, rr.readErr()
 		}
@@ -129,7 +132,7 @@ func (rr *RegexReader) Read(p []byte) (n int, err error) {
 	return n, nil
 }
 
-// getLastBytes returns the last n bytes from the buffer.
+// getLastBytes returns the last l bytes from the buffer starting at offset n.
 // It resets the reader to right after the match (n+l).
 func (rr *RegexReader) getLastBytes(n, l int) ([]byte, error) {
 	n += rr.prevReadBytes
@@ -137,7 +140,9 @@ func (rr *RegexReader) getLastBytes(n, l int) ([]byte, error) {
 		rr.prevReadBytes = rr.readBytes
 	}()
 
-	// The regex reader reads more bytes than the regex match, so we need to reset the reader to the correct position
+	// In many cases, our reader reads more bytes than the regex matcher processed, so we need to reset
+	// the reader to the correct position in our buffers (right after the match).
+	// That way the next match can start right after the last one, and we don't miss any bytes.
 	err := rr.resetReaderTo(n + l)
 	if err != nil {
 		return nil, err
@@ -146,6 +151,7 @@ func (rr *RegexReader) getLastBytes(n, l int) ([]byte, error) {
 	result := make([]byte, l)
 
 	// If the underlying reader supports io.ReaderAt, use that to get the last bytes
+	// TODO this could probably lead to race conditions where the file is modified in between first and second read
 	rAt, ok := rr.rd.(io.ReaderAt)
 	if ok {
 		_, err := rAt.ReadAt(result, int64(n))
@@ -173,6 +179,7 @@ func (rr *RegexReader) getLastBytes(n, l int) ([]byte, error) {
 			copy(result, rr.prevBuf[baseOffset:baseOffset+l])
 		}
 	} else {
+		// OOB matches can happen if the string matched by the regex is larger than ~2x the buffer size
 		fmt.Println("Out of bounds match:", rr.readBytes-(n+l))
 		panic("Out of bounds match")
 	}
