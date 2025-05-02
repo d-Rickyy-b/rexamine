@@ -54,7 +54,7 @@ func BenchmarkRexamine(b *testing.B) {
 			b.Fatalf("Error opening file: %v", openErr)
 		}
 
-		newReader := NewRegexReaderSize(targetFile, pattern, 16)
+		newReader := NewRegexReader(targetFile, pattern)
 
 		_, err := newReader.FindAllMatches()
 		if err != nil {
