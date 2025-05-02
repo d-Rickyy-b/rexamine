@@ -15,45 +15,51 @@ var (
 )
 
 func BenchmarkIOCopy(b *testing.B) {
-	targetFile, openErr := os.Open(fileName)
-	if openErr != nil {
-		b.Fatalf("Error opening file: %v", openErr)
-	}
+	for i := 0; i < b.N; i++ {
+		targetFile, openErr := os.Open(fileName)
+		if openErr != nil {
+			b.Fatalf("Error opening file: %v", openErr)
+		}
 
-	buf := &bytes.Buffer{}
-	_, copyErr := io.Copy(buf, targetFile)
-	if copyErr != nil {
-		b.Fatalf("Error reading file: %v", copyErr)
-	}
+		buf := &bytes.Buffer{}
+		_, copyErr := io.Copy(buf, targetFile)
+		if copyErr != nil {
+			b.Fatalf("Error reading file: %v", copyErr)
+		}
 
-	_ = pattern.FindAll(buf.Bytes(), -1)
+		_ = pattern.FindAll(buf.Bytes(), -1)
+	}
 }
 
 func BenchmarkIOReadAll(b *testing.B) {
-	targetFile, openErr := os.Open(fileName)
-	if openErr != nil {
-		b.Fatalf("Error opening file: %v", openErr)
-	}
+	for i := 0; i < b.N; i++ {
+		targetFile, openErr := os.Open(fileName)
+		if openErr != nil {
+			b.Fatalf("Error opening file: %v", openErr)
+		}
 
-	content, readErr := io.ReadAll(targetFile)
-	if readErr != nil {
-		b.Fatalf("Error reading file: %v", readErr)
-	}
+		content, readErr := io.ReadAll(targetFile)
+		if readErr != nil {
+			b.Fatalf("Error reading file: %v", readErr)
+		}
 
-	_ = pattern.FindAll(content, -1)
+		_ = pattern.FindAll(content, -1)
+	}
 }
 
 func BenchmarkRexamine(b *testing.B) {
-	targetFile, openErr := os.Open(fileName)
-	if openErr != nil {
-		b.Fatalf("Error opening file: %v", openErr)
-	}
+	for i := 0; i < b.N; i++ {
+		targetFile, openErr := os.Open(fileName)
+		if openErr != nil {
+			b.Fatalf("Error opening file: %v", openErr)
+		}
 
-	newReader := NewRegexReaderSize(targetFile, pattern, 16)
+		newReader := NewRegexReaderSize(targetFile, pattern, 16)
 
-	_, err := newReader.FindAllMatches()
-	if err != nil {
-		b.Fatalf("Error searching for matches: %v", err)
+		_, err := newReader.FindAllMatches()
+		if err != nil {
+			b.Fatalf("Error searching for matches: %v", err)
+		}
 	}
 }
 
