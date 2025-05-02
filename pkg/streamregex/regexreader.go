@@ -218,7 +218,10 @@ func (rr *RegexReader) getLastBytes(n, l int) ([]byte, error) {
 	}
 
 	// Check if we need to copy bytes from prevBuf, buf or both
-	if baseOffset >= len(rr.buf) {
+	if rr.sourceReadBytes <= len(rr.buf) {
+		// If we didn't read more bytes than the buffer size, we can just read from the buffer
+		copy(result, rr.buf[baseOffset:baseOffset+l])
+	} else if baseOffset >= len(rr.buf) {
 		// Match is fully in buf
 		baseOffset -= len(rr.buf)
 		copy(result, rr.buf[baseOffset:baseOffset+l])
