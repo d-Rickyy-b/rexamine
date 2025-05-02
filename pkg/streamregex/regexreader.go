@@ -154,9 +154,9 @@ func (rr *RegexReader) getLastBytes(n, l int) ([]byte, error) {
 	// TODO this could probably lead to race conditions where the file is modified in between first and second read
 	rAt, ok := rr.rd.(io.ReaderAt)
 	if ok {
-		_, err := rAt.ReadAt(result, int64(n))
-		if err != nil {
-			return result, err
+		_, readAtErr := rAt.ReadAt(result, int64(n))
+		if readAtErr != nil {
+			return result, readAtErr
 		}
 		return result, nil
 	}
